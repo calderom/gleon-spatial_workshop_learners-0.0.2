@@ -87,3 +87,55 @@ st_crs(fish_locations) #ok as in UTM zone 17N
 mapview(fish_locations)
 table(fish_locations$animal_id) #only 2 fishs
 
+#www.epsg.io --> to know more about codes / tutorials
+
+#RASTER
+library(raster)
+library(rgdal)
+
+GDALinfo("data/erie_bathy.tif") #info
+
+erie_bathy <- raster("data/erie_bathy.tif")
+
+summary(erie_bathy) #we should look at the metadata to know more about these numbers
+mapview(erie_bathy) #elevation plot
+
+#to plot with ggplot have to convert the raster layer to dataframe
+erie_bathy_df <- as.data.frame(erie_bathy, xy = TRUE)
+  
+#nice static plot  
+ggplot()+
+  geom_raster(data=erie_bathy_df, aes(x = x , y = y, fill =erie_bathy))+
+  scale_fill_viridis_c(na.value="deeppink")
+
+#again into raster format!
+minValue(erie_bathy)
+maxValue(erie_bathy)
+
+#hitogram of bathymetry dataset
+ggplot()+
+  geom_histogram(data=erie_bathy_df, aes(erie_bathy))
+
+
+#LAST BIT
+fish_locations_bathy <- extract(x = erie_bathy, 
+                             y = as(fish_locations,"Spatial"), df = TRUE)
+summary(fish_locations_bathy) #maybe 0 is not lake level as it is weird that fish went up to land (i.e. > 0)
+
+ggplot()+
+  geom_histogram(data=fish_locations_bathy,
+                 aes(x=erie_bathy))
+
+erie_bathy_cropped <- crop(x=erie_bathy, y = as(erie_outline, 
+                          "Spatial"))
+mapview(erie_bathy_cropped)
+
+mapview(erie_bathy)+
+  mapview(erie_bathy_cropped)
+
+#https://rspatial.org/raster/pkg/index.html
+#https://datacarpentry.org --> examples of data
+  #rater time series data!
+#Phyton or Rraster or QGIS but he is not using ArcGis
+
+
