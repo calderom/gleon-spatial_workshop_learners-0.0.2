@@ -7,3 +7,8 @@
 install.packages(c("dplyr", "ggplot2", "raster", "rgdal", "rasterVis", "sf", "mapview"))
 # If you encounter errors you may need to install external prerequsite programs:
 # https://datacarpentry.org/geospatial-workshop/setup.html
+
+#to solve initial error!
+install.packages("Rcpp")
+install.packages("sf")
+install.packages("mapview")
